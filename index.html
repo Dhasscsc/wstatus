@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>தாஸ் பொது சேவை மையம் - முழுமையான மேலாண்மை</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ஹெடர் -->
+        <div class="header">
+            <h1><i class="fas fa-building"></i> தாஸ் பொது சேவை மையம்</h1>
+            <p class="tagline">(மத்திய மாநில அரசு அங்கீகாரம் பெற்றது)</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>147எ, கிரேட் காட்டன் ரோடு, மத்திய பாகம் காவல் நிலையம் எதிரில், தூத்துக்குடி-628001</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>98 43 23 23 24 / 88 70 23 23 32 / 95 85 33 43 65</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>dhasscsc@gmail.com</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- டேஷ்போர்டு -->
+        <div class="dashboard">
+            <div class="stat-card customers">
+                <h3>வாடிக்கையாளர்கள்</h3>
+                <div class="count" id="total-customers">0</div>
+                <p>மொத்த வாடிக்கையாளர்கள்</p>
+            </div>
+            <div class="stat-card pending-jobs">
+                <h3>நிலுவை வேலைகள்</h3>
+                <div class="count" id="pending-jobs-count">0</div>
+                <p>செய்ய வேண்டியவை</p>
+            </div>
+            <div class="stat-card debtors">
+                <h3>பாக்கி தொகை</h3>
+                <div class="count" id="total-debt">₹0</div>
+                <p>செலுத்தப்பட வேண்டியது</p>
+            </div>
+            <div class="stat-card services">
+                <h3>சேவைகள்</h3>
+                <div class="count" id="total-services">0</div>
+                <p>வகைகள் & சேவைகள்</p>
+            </div>
+        </div>
+
+        <!-- தாவல்கள் -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('customers')" data-tab="customers">
+                <i class="fas fa-users"></i> வாடிக்கையாளர்கள்
+            </button>
+            <button class="tab-btn" onclick="showTab('jobs')" data-tab="jobs">
+                <i class="fas fa-tasks"></i> வேலைகள்
+            </button>
+            <button class="tab-btn" onclick="showTab('services')" data-tab="services">
+                <i class="fas fa-cogs"></i> சேவைகள்
+            </button>
+            <button class="tab-btn" onclick="showTab('payments')" data-tab="payments">
+                <i class="fas fa-money-bill-wave"></i> கட்டணங்கள்
+            </button>
+            <button class="tab-btn" onclick="showTab('reports')" data-tab="reports">
+                <i class="fas fa-chart-bar"></i> அறிக்கைகள்
+            </button>
+        </div>
+
+        <!-- முக்கிய உள்ளடக்கம் -->
+        <div class="main-content">
+            <!-- வாடிக்கையாளர்கள் தாவல் -->
+            <div class="tab-content active" id="customers-tab">
+                <div class="content-header">
+                    <h2><i class="fas fa-users"></i> வாடிக்கையாளர் மேலாண்மை</h2>
+                    <button class="add-btn" onclick="showCustomerModal()">
+                        <i class="fas fa-plus"></i> புதிய வாடிக்கையாளர்
+                    </button>
+                </div>
+
+                <div class="search-filter">
+                    <input type="text" id="customer-search" placeholder="🔍 பெயர், தொலைபேசி அல்லது ஆதாரால் தேடுக...">
+                    <select id="customer-filter">
+                        <option value="all">அனைத்தும்</option>
+                        <option value="debtor">பாக்கி உள்ளவர்கள்</option>
+                        <option value="cleared">முழுவதும் செலுத்தியவர்கள்</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table id="customers-table">
+                        <thead>
+                            <tr>
+                                <th>குறியீடு</th>
+                                <th>வாடிக்கையாளர்</th>
+                                <th>தொலைபேசி</th>
+                                <th>சேவைகள்</th>
+                                <th>மொத்த தொகை</th>
+                                <th>செலுத்தியது</th>
+                                <th>பேலன்ஸ்</th>
+                                <th>செயல்கள்</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table-body">
+                            <!-- வாடிக்கையாளர்கள் இங்கே காட்டப்படும் -->
+                        </tbody>
+                    </table>
+                    <div id="no-customers" class="no-data">
+                        <i class="fas fa-users-slash"></i>
+                        <h3>வாடிக்கையாளர்கள் இல்லை</h3>
+                        <p>முதல் வாடிக்கையாளரைச் சேர்க்க தொடங்குக!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- வேலைகள் தாவல் -->
+            <div class="tab-content" id="jobs-tab">
+                <div class="content-header">
+                    <h2><i class="fas fa-tasks"></i> வேலைகள் மேலாண்மை</h2>
+                    <button class="add-btn" onclick="showJobModal()">
+                        <i class="fas fa-plus"></i> புதிய வேலை
+                    </button>
+                </div>
+
+                <div class="search-filter">
+                    <input type="text" id="job-search" placeholder="🔍 குறிப்பு எண், பெயர் அல்லது சேவையால் தேடுக...">
+                    <select id="job-filter">
+                        <option value="all">அனைத்து நிலைகள்</option>
+                        <option value="pending">நிலுவையில்</option>
+                        <option value="inprogress">செயல்பாட்டில்</option>
+                        <option value="completed">முடிந்தது</option>
+                        <option value="delivered">வழங்கப்பட்டது</option>
+                    </select>
+                    <button class="whatsapp-btn" onclick="sendBulkJobUpdates()">
+                        <i class="fab fa-whatsapp"></i> நிலுவை வேலைகளுக்கு அப்டேட்
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table id="jobs-table">
+                        <thead>
+                            <tr>
+                                <th>குறிப்பு எண்</th>
+                                <th>வாடிக்கையாளர்</th>
+                                <th>சேவை</th>
+                                <th>சமர்ப்பித்த தேதி</th>
+                                <th>செக் தேதி</th>
+                                <th>நிலை</th>
+                                <th>செயல்கள்</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobs-table-body">
+                            <!-- வேலைகள் இங்கே காட்டப்படும் -->
+                        </tbody>
+                    </table>
+                    <div id="no-jobs" class="no-data">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>வேலைகள் இல்லை</h3>
+                        <p>முதல் வேலையைப் பதிவு செய்ய தொடங்குக!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- சேவைகள் தாவல் -->
+            <div class="tab-content" id="services-tab">
+                <div class="content-header">
+                    <h2><i class="fas fa-cogs"></i> சேவைகள் மேலாண்மை</h2>
+                    <button class="add-btn" onclick="showServiceCategoryModal()">
+                        <i class="fas fa-plus"></i> புதிய சேவை வகை
+                    </button>
+                </div>
+
+                <div id="services-categories">
+                    <!-- சேவை வகைகள் இங்கே காட்டப்படும் -->
+                </div>
+            </div>
+
+            <!-- கட்டணங்கள் தாவல் -->
+            <div class="tab-content" id="payments-tab">
+                <div class="content-header">
+                    <h2><i class="fas fa-money-bill-wave"></i> கட்டணங்கள் மேலாண்மை</h2>
+                    <button class="add-btn" onclick="showPaymentModal()">
+                        <i class="fas fa-plus"></i> புதிய கட்டணம்
+                    </button>
+                </div>
+
+                <div class="filter-section">
+                    <h3><i class="fas fa-exclamation-triangle"></i> பாக்கி தொகை உள்ள வாடிக்கையாளர்கள்</h3>
+                    <button class="whatsapp-btn" onclick="sendDebtReminders()">
+                        <i class="fab fa-whatsapp"></i> அனைவருக்கும் நினைவூட்டல்
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table id="debtors-table">
+                        <thead>
+                            <tr>
+                                <th>வாடிக்கையாளர்</th>
+                                <th>தொலைபேசி</th>
+                                <th>மொத்த தொகை</th>
+                                <th>செலுத்தியது</th>
+                                <th>பாக்கி</th>
+                                <th>கடைசி கட்டணம்</th>
+                                <th>செயல்கள்</th>
+                            </tr>
+                        </thead>
+                        <tbody id="debtors-table-body">
+                            <!-- பாக்கி உள்ளவர்கள் இங்கே காட்டப்படும் -->
+                        </tbody>
+                    </table>
+                    <div id="no-debtors" class="no-data">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>பாக்கி தொகை உள்ளவர்கள் இல்லை</h3>
+                        <p>அனைத்து வாடிக்கையாளர்களும் முழுவதும் செலுத்தியுள்ளனர்!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- அறிக்கைகள் தாவல் -->
+            <div class="tab-content" id="reports-tab">
+                <div class="content-header">
+                    <h2><i class="fas fa-chart-bar"></i> அறிக்கைகள்</h2>
+                    <button class="print-btn" onclick="printReport()">
+                        <i class="fas fa-print"></i> அச்சிடுக
+                    </button>
+                </div>
+
+                <div class="report-filters">
+                    <div class="filter-group">
+                        <label>அறிக்கை வகை:</label>
+                        <select id="report-type">
+                            <option value="daily">தினசரி அறிக்கை</option>
+                            <option value="weekly">வாராந்திர அறிக்கை</option>
+                            <option value="monthly">மாதாந்திர அறிக்கை</option>
+                            <option value="debtors">பாக்கி அறிக்கை</option>
+                            <option value="jobs">வேலைகள் அறிக்கை</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>தேதி:</label>
+                        <input type="date" id="report-date">
+                    </div>
+                    <button class="primary-btn" onclick="generateReport()">
+                        <i class="fas fa-chart-line"></i> அறிக்கை உருவாக்குக
+                    </button>
+                </div>
+
+                <div id="report-output">
+                    <!-- அறிக்கை இங்கே காட்டப்படும் -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ஃபுடர் -->
+        <div class="footer">
+            <p>© 2023 தாஸ் பொது சேவை மையம் - முழுமையான மேலாண்மை மென்பொருள்</p>
+            <p>தூத்துக்குடி | dhasscsc@gmail.com | 98 43 23 23 24</p>
+        </div>
+    </div>
+
+    <!-- மாடல்கள் -->
+    
+    <!-- வாடிக்கையாளர் மாடல் -->
+    <div id="customer-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> புதிய வாடிக்கையாளர்</h3>
+                <button class="close-modal" onclick="closeModal('customer-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="customer-form">
+                    <input type="hidden" id="customer-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customer-name"><i class="fas fa-user"></i> பெயர் *</label>
+                            <input type="text" id="customer-name" placeholder="முழு பெயர்" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customer-phone"><i class="fas fa-phone"></i> தொலைபேசி *</label>
+                            <input type="tel" id="customer-phone" placeholder="98 43 23 23 24" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customer-address"><i class="fas fa-map-marker-alt"></i> முகவரி</label>
+                        <textarea id="customer-address" rows="2" placeholder="முழு முகவரி"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customer-services"><i class="fas fa-cogs"></i> சேவைகள் (டிராப் டவுண்)</label>
+                        <select id="customer-services" multiple class="multi-select">
+                            <!-- சேவைகள் ஜாவாஸ்கிரிப்ட் மூலம் சேர்க்கப்படும் -->
+                        </select>
+                        <small class="hint">Ctrl+Click (Windows) அல்லது Cmd+Click (Mac) பயன்படுத்தி பல சேவைகளை தேர்ந்தெடுக்கவும்</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="total-amount"><i class="fas fa-rupee-sign"></i> மொத்த தொகை (₹)</label>
+                            <input type="number" id="total-amount" placeholder="0" min="0" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="paid-amount"><i class="fas fa-money-check-alt"></i> செலுத்தியது (₹)</label>
+                            <input type="number" id="paid-amount" placeholder="0" min="0" step="100">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customer-notes"><i class="fas fa-sticky-note"></i> குறிப்புகள்</label>
+                        <textarea id="customer-notes" rows="2" placeholder="கூடுதல் விவரங்கள்"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="primary-btn">
+                            <i class="fas fa-save"></i> சேமிக்க
+                        </button>
+                        <button type="button" class="outline-btn" onclick="closeModal('customer-modal')">
+                            <i class="fas fa-times"></i> ரத்து செய்க
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- வேலை மாடல் -->
+    <div id="job-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-tasks"></i> புதிய வேலை</h3>
+                <button class="close-modal" onclick="closeModal('job-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="job-form">
+                    <input type="hidden" id="job-id">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="job-ref-no"><i class="fas fa-hashtag"></i> குறிப்பு எண்</label>
+                            <input type="text" id="job-ref-no" placeholder="நிரப்பவும் அல்லது பேஸ்ட் செய்யவும்">
+                            <small class="hint">சேவை மையத்தின் குறிப்பு எண்ணை இங்கே உள்ளிடவும்</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-customer"><i class="fas fa-user"></i> வாடிக்கையாளர் *</label>
+                            <select id="job-customer" required>
+                                <option value="">தேர்ந்தெடுக்கவும்</option>
+                                <!-- வாடிக்கையாளர்கள் ஜாவாஸ்கிரிப்ட் மூலம் சேர்க்கப்படும் -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="job-service"><i class="fas fa-cog"></i> சேவை வகை *</label>
+                        <select id="job-service" required onchange="updateServiceDetails()">
+                            <option value="">தேர்ந்தெடுக்கவும்</option>
+                            <!-- சேவைகள் ஜாவாஸ்கிரிப்ட் மூலம் சேர்க்கப்படும் -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="job-details"><i class="fas fa-info-circle"></i> வேலை விவரம்</label>
+                        <textarea id="job-details" rows="3" placeholder="வேலை பற்றிய முழு விவரம்"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="job-submitted-date"><i class="fas fa-calendar-check"></i> சமர்ப்பித்த தேதி</label>
+                            <input type="date" id="job-submitted-date">
+                        </div>
+                        <div class="form-group">
+                            <label for="job-check-date"><i class="fas fa-calendar-alt"></i> செக் தேதி</label>
+                            <input type="date" id="job-check-date">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="job-status"><i class="fas fa-sync-alt"></i> நிலை</label>
+                            <select id="job-status">
+                                <option value="pending">நிலுவையில்</option>
+                                <option value="inprogress">செயல்பாட்டில்</option>
+                                <option value="completed">முடிந்தது</option>
+                                <option value="delivered">வழங்கப்பட்டது</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-priority"><i class="fas fa-exclamation-circle"></i> முன்னுரிமை</label>
+                            <select id="job-priority">
+                                <option value="low">குறைந்த</option>
+                                <option value="medium">நடுத்தர</option>
+                                <option value="high">அதிக</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> வாட்ச்அப் செய்தி (சேவை மாற்றியபின்)</label>
+                        <textarea id="job-whatsapp-message" rows="3" placeholder="வாடிக்கையாளருக்கு அனுப்ப வேண்டிய செய்தி..."></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="primary-btn">
+                            <i class="fas fa-save"></i> சேமிக்க
+                        </button>
+                        <button type="button" class="whatsapp-btn" onclick="sendJobWhatsApp()">
+                            <i class="fab fa-whatsapp"></i> வாட்ச்அப் செய்க
+                        </button>
+                        <button type="button" class="outline-btn" onclick="closeModal('job-modal')">
+                            <i class="fas fa-times"></i> ரத்து செய்க
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- சேவை வகை மாடல் -->
+    <div id="service-category-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-folder-plus"></i> புதிய சேவை வகை</h3>
+                <button class="close-modal" onclick="closeModal('service-category-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="service-category-form">
+                    <input type="hidden" id="service-category-id">
+                    
+                    <div class="form-group">
+                        <label for="category-name"><i class="fas fa-folder"></i> வகை பெயர் *</label>
+                        <input type="text" id="category-name" placeholder="எ.கா: அரசு சேவைகள், வங்கி சேவைகள்" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category-description"><i class="fas fa-file-alt"></i> விளக்கம்</label>
+                        <textarea id="category-description" rows="2" placeholder="வகை பற்றிய விளக்கம்"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="primary-btn">
+                            <i class="fas fa-save"></i> சேமிக்க
+                        </button>
+                        <button type="button" class="outline-btn" onclick="closeModal('service-category-modal')">
+                            <i class="fas fa-times"></i> ரத்து செய்க
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- சேவை மாடல் -->
+    <div id="service-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> புதிய சேவை</h3>
+                <button class="close-modal" onclick="closeModal('service-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="service-form">
+                    <input type="hidden" id="service-id">
+                    
+                    <div class="form-group">
+                        <label for="service-category"><i class="fas fa-folder"></i> வகை *</label>
+                        <select id="service-category" required>
+                            <!-- வகைகள் ஜாவாஸ்கிரிப்ட் மூலம் சேர்க்கப்படும் -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="service-name"><i class="fas fa-tag"></i> சேவை பெயர் *</label>
+                        <input type="text" id="service-name" placeholder="எ.கா: ஆதார் கார்டு, பாஸ்போர்ட்" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="service-price"><i class="fas fa-rupee-sign"></i> கட்டணம் (₹)</label>
+                            <input type="number" id="service-price" placeholder="0" min="0" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="service-duration"><i class="fas fa-clock"></i> கால அளவு (நாட்கள்)</label>
+                            <input type="number" id="service-duration" placeholder="0" min="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="service-requirements"><i class="fas fa-list-check"></i> தேவையான ஆவணங்கள்</label>
+                        <textarea id="service-requirements" rows="2" placeholder="தேவையான ஆவணங்களின் பட்டியல்"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="primary-btn">
+                            <i class="fas fa-save"></i> சேமிக்க
+                        </button>
+                        <button type="button" class="outline-btn" onclick="closeModal('service-modal')">
+                            <i class="fas fa-times"></i> ரத்து செய்க
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- கட்டண மாடல் -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-money-bill-wave"></i> புதிய கட்டணம்</h3>
+                <button class="close-modal" onclick="closeModal('payment-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="payment-form">
+                    <input type="hidden" id="payment-id">
+                    
+                    <div class="form-group">
+                        <label for="payment-customer"><i class="fas fa-user"></i> வாடிக்கையாளர் *</label>
+                        <select id="payment-customer" required onchange="showCustomerBalance()">
+                            <option value="">தேர்ந்தெடுக்கவும்</option>
+                            <!-- வாடிக்கையாளர்கள் ஜாவாஸ்கிரிப்ட் மூலம் சேர்க்கப்படும் -->
+                        </select>
+                    </div>
+                    
+                    <div id="customer-balance-info" style="display: none; background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <!-- வாடிக்கையாளர் பேலன்ஸ் தகவல் -->
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-amount"><i class="fas fa-rupee-sign"></i> தொகை (₹) *</label>
+                            <input type="number" id="payment-amount" placeholder="0" min="0" step="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-date"><i class="fas fa-calendar"></i> தேதி *</label>
+                            <input type="date" id="payment-date" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="payment-mode"><i class="fas fa-credit-card"></i> முறை</label>
+                            <select id="payment-mode">
+                                <option value="cash">பணம்</option>
+                                <option value="online">ஆன்லைன்</option>
+                                <option value="cheque">செக்</option>
+                                <option value="upi">UPI</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-reference"><i class="fas fa-receipt"></i> ரசீது எண்</label>
+                            <input type="text" id="payment-reference" placeholder="ரசீது எண்">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="payment-notes"><i class="fas fa-sticky-note"></i> குறிப்புகள்</label>
+                        <textarea id="payment-notes" rows="2" placeholder="கூடுதல் விவரங்கள்"></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="submit" class="primary-btn">
+                            <i class="fas fa-save"></i> சேமிக்க
+                        </button>
+                        <button type="button" class="whatsapp-btn" onclick="sendPaymentReceipt()">
+                            <i class="fab fa-whatsapp"></i> ரசீது அனுப்புக
+                        </button>
+                        <button type="button" class="outline-btn" onclick="closeModal('payment-modal')">
+                            <i class="fas fa-times"></i> ரத்து செய்க
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- வாட்ச்அப் மாடல் -->
+    <div id="whatsapp-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fab fa-whatsapp"></i> வாட்ச்அப் செய்தி</h3>
+                <button class="close-modal" onclick="closeModal('whatsapp-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="whatsapp-phone"><i class="fas fa-phone"></i> தொலைபேசி எண்</label>
+                    <input type="tel" id="whatsapp-phone" placeholder="98 43 23 23 24">
+                </div>
+                <div class="form-group">
+                    <label for="whatsapp-message"><i class="fas fa-comment"></i> செய்தி</label>
+                    <textarea id="whatsapp-message" rows="6" placeholder="செய்தியை இங்கே உள்ளிடவும்..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="whatsapp-btn" onclick="sendCustomWhatsApp()">
+                        <i class="fab fa-whatsapp"></i> வாட்ச்அப் செய்க
+                    </button>
+                    <button type="button" class="outline-btn" onclick="closeModal('whatsapp-modal')">
+                        <i class="fas fa-times"></i> மூடுக
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ஜாவாஸ்கிரிப்ட் கோப்பு -->
+    <script src="script.js"></script>
+</body>
+</html>
